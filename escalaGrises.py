@@ -1,4 +1,3 @@
-import cv2
 from PIL import Image
 from sys import argv
 
@@ -14,10 +13,5 @@ for i in range(ancho):
     	s = int(a[0]*0.299)+int(a[1]*0.587)+int(a[2]*0.114)    	
     	pixeles[i,j] = (s,s,s)
 
-new = 'grises.png'
+new = 'grises.jpg'
 img.save(new)
-new2 = cv2.imread('grises.png',-1)
-cv2.imshow("Imagen",new2)
-print "Oprima una tecla para cerrar"
-cv2.waitKey(0)
-cv2.destroyAllWindows();
