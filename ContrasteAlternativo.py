@@ -1,4 +1,4 @@
-#Es un contraste con colores mas claros
+#Es un contraste con colores mas obscuros
 
 import BasicOperations as bo;
 from PIL import Image
@@ -24,7 +24,7 @@ bo.toGrayScale(pixeles, ancho, alto)
 for i in range(ancho):
 	    for j in range(alto):
 	    	pixel = pixeles[i,j]
-	    	newpx = pixel[0] * gamma + beta
+	    	newpx = pixel[0] / gamma - beta
 	    	#Valida los valores
 	    	if newpx < 0:
 	    		newpx = 0
@@ -35,5 +35,5 @@ for i in range(ancho):
 	    	#Coloca el nuevo valor
 	    	pixeles[i,j] = (newpx, newpx, newpx)
 
-new = "contraste.jpg"
+new = "contrasteAlternativo.jpg"
 img.save(new)
