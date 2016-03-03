@@ -6,9 +6,9 @@ from sys import argv
 nombreImagen = argv[1]
 
 #Selecciona el brillo a agregar
-brillo = 0;
-while brillo < 1 or brillo > 255:
-	brillo = input("Ingresa el brillo a anadir (1-255) : ")
+brillo = 256;
+while brillo < -255 or brillo > 255:
+	brillo = input("Ingresa el brillo (-255 a 255) : ")
 
 #Obtiene la imagen,el tamano, y los pixeles
 img = Image.open(nombreImagen)
