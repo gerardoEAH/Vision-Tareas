@@ -6,9 +6,9 @@ from sys import argv
 nombreImagen = argv[1]
 
 #Selecciona el brillo a agregar
-brillo = 256;
-while brillo < -255 or brillo > 255:
-	brillo = input("Ingresa el brillo (-255 a 255) : ")
+x = -1;
+while x < 0:
+	x = input("Ingresa la cantidad a aclarar (mayor a 0.0) : ")
 
 #Obtiene la imagen,el tamano, y los pixeles
 img = Image.open(nombreImagen)
@@ -23,7 +23,7 @@ max = 0
 for i in range(ancho):
 	    for j in range(alto):
 	    	pixel = pixeles[i,j]
-	    	newpx = pixel[0] + brillo    	
+	    	newpx = int(pixel[0] * x)    	
 	    	pixeles[i,j] = (newpx, newpx, newpx)
 	    	if newpx > max :
 	    		max = newpx
@@ -32,5 +32,5 @@ for i in range(ancho):
 #if max > 255:
 #	bo.normalize(pixeles, max, ancho, alto)
 
-new = "brillo.jpg"
+new = "aclaradoDeImagen.jpg"
 img.save(new)
