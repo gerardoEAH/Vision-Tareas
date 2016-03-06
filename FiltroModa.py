@@ -1,4 +1,4 @@
-import BasicOperations as bo;
+import BasicOperations as bo
 from PIL import Image
 from sys import argv
 import os
@@ -63,8 +63,6 @@ def imgModa(img, ancho, alto,pixeles):
 	    		p8 = pixeles[i+1,j+1][0]
 
 	    	listaModa=[p1,p2,p3,p4,p5,p6,p7,p8]
-	    	print listaModa
-	    	print ""
 	    	repeticiones = 0
 	    	for k in listaModa:
 	    		apariciones = listaModa.count(k)
@@ -76,11 +74,9 @@ def imgModa(img, ancho, alto,pixeles):
 	    		if apariciones == repeticiones and k not in modas:
 	    			modas.append(k)
 	    	newpx = k
-	    	print "moda:", modas
 	    	pixeles[i,j] = (newpx, newpx, newpx)
 
-	new ="Pikachu.jpg"
-	print "se guardo"
+	new ="filtroModa.jpg"
 	img.save(new)
 
 
