@@ -3,18 +3,15 @@ from PIL import Image
 from sys import argv
 import os
 
-def escalaGrises(nombreImagen=argv[1]):
 
-	img = Image.open(nombreImagen)
-	ancho,alto= img.size
-	pixeles = img.load()
+def escalaGrisesModa(nombreImagen= argv[1]):
+	imagen = Image.open(nombreImagen)
+	ancho,alto= imagen.size
+	pixeles = imagen.load()
 	bo.toGrayScale(pixeles,ancho,alto)
+	imgModa(imagen, ancho, alto, pixeles)
 
-	imgModa(img, ancho, alto, pixeles)
-
-
-def imgModa(img, ancho, alto,pixeles):
-
+def imgModa(imagen, ancho, alto,pixeles):
 	for i in range(ancho):
 		for j in range(alto):
 			if i - 1 < 0 or j - 1 < 0:
@@ -77,15 +74,5 @@ def imgModa(img, ancho, alto,pixeles):
 	    	pixeles[i,j] = (newpx, newpx, newpx)
 
 	new ="filtroModa.jpg"
-	img.save(new)
+	imagen.save(new)
 
-
-				
-
-
-
-
-
-
-
-escalaGrises()
