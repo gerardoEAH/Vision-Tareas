@@ -17,7 +17,7 @@ class Aplicacion(Frame):
         self.parent.title('Ventana')
         self.pack(fill=BOTH, expand=1)
         #Área de botones
-        self.moda = Button(text='Filtro Mooooda', command = self.boton_FiltroModa).pack(side=LEFT)
+        self.moda = Button(text='Filtro Moda', command = self.boton_FiltroModa).pack(side=LEFT)
 
     #Funciones de cada boton.    
     def boton_FiltroModa(self):
