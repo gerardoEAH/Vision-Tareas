@@ -4,27 +4,30 @@ import math
 from PIL import Image
 from sys import argv
 
-#obtiene nombre de imagen como parametro
-nombreImagen = argv[1]
+def umbMaxProb():
 
-#Abre la imagen, obtiene su ancho, alto y sus pixeles
-img = Image.open(nombreImagen)
-ancho,alto = img.size
-pixeles = img.load()
+	#obtiene nombre de imagen como parametro
+	nombreImagen = argv[1]
 
-#La transforma a escala de grises
-bo.toGrayScale(pixeles, ancho, alto)
+	#Abre la imagen, obtiene su ancho, alto y sus pixeles
+	img = Image.open(nombreImagen)
+	ancho,alto = img.size
+	pixeles = img.load()
 
-#Obtener promedio y varianza
-promedio = est.average(pixeles, ancho, alto)
-varianza = est.varianza(pixeles, ancho, alto, promedio)
+	#La transforma a escala de grises
+	bo.toGrayScale(pixeles, ancho, alto)
 
-#Formula Umbral de Maxima Probabilidad
-for i in range(ancho):
-		    for j in range(alto):
-		    	pixel = pixeles[i,j][0]
-		    	newpx =  int((1 / ((2 * math.pi * varianza))**0.5)**(-(((promedio - pixel)**2) / (varianza * 2))))
-		    	pixeles[i,j] = (newpx, newpx, newpx)
+	#Obtener promedio y varianza
+	promedio = est.average(pixeles, ancho, alto)
+	varianza = est.varianza(pixeles, ancho, alto, promedio)
 
-new = "UmbralMaxProbabilidad.jpg"
-img.save(new)
+	#Formula Umbral de Maxima Probabilidad
+	for i in range(ancho):
+			    for j in range(alto):
+			    	pixel = pixeles[i,j][0]
+			    	newpx =  int((1 / ((2 * math.pi * varianza))**0.5)**(-(((promedio - pixel)**2) / (varianza * 2))))
+			    	pixeles[i,j] = (newpx, newpx, newpx)
+
+	new = "UmbralMaxProbabilidad.jpg"
+	img.save(new)
+	print "Imagen generada con exito 'UmbralMaxProbabilidad.jpg'"

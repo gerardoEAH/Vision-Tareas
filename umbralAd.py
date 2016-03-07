@@ -68,6 +68,7 @@ def umbral():
 
 	new = "umbralAdaptativo.jpg"
 	img.save(new)
+	print "Imagen generada con exito 'umbralAdaptativo.jpg'"
 
 if __name__ == '__main__':
 	umbral()

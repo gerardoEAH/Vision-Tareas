@@ -30,9 +30,9 @@ def salYpimienta(img,ancho,alto,pixeles):
                     img.putpixel((i,j),(sal_p, sal_p, sal_p))   
             else:
                 img.putpixel((i,j),(r, g, b))            
-    print "se guardo" 
     new = "ruido.jpg"
-    img.save(new)	           
+    img.save(new)
+    print "Imagen generada con exito 'ruido.jpg'"	           
     return img 
     
 
