@@ -4,7 +4,7 @@ import BasicOperations as bo;
 from PIL import Image
 from sys import argv
 
-def contrasteObscuro:
+def contrasteObscuro():
 
 	#obtiene nombre de imagen como parametro
 	nombreImagen = argv[1]

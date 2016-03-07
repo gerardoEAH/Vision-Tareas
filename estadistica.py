@@ -1,5 +1,5 @@
 #Devuelve el promedio de una imagen
-def average(pixeles, ancho, alto):
+def averageUno(pixeles, ancho, alto):
 	suma = 0
 	for i in range(ancho):
 		    for j in range(alto):

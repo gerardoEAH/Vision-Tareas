@@ -38,7 +38,7 @@ def umbralAdaptativo(hist, total):
 
 	return (tresh1 + thresh2) / 2
 
-def umbral():
+def umbralAda():
 	nombreImagen = argv[1]
 
 	#Obtiene la imagen,el tamano, y los pixeles
@@ -70,5 +70,3 @@ def umbral():
 	img.save(new)
 	print "Imagen generada con exito 'umbralAdaptativo.jpg'"
 
-if __name__ == '__main__':
-	umbral()

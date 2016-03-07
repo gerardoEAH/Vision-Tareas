@@ -4,17 +4,17 @@ from sys import argv
 import random
 
 
-def escalaGrises(nombreImagen=argv[1]):
+def escalaGrisesRuido(nombreImagen=argv[1]):
 	
 	img = Image.open(nombreImagen)
 	ancho,alto  =img.size
 	pixeles = img.load()
 	bo.toGrayScale(pixeles,ancho,alto)
 	
-	salYpimienta(img,ancho,alto,pixeles)
+	SalYpimienta(img,ancho,alto,pixeles)
 
 
-def salYpimienta(img,ancho,alto,pixeles):
+def SalYpimienta(img,ancho,alto,pixeles):
     prob = 0
     prob = input("Dame la probabilidad entre 0-1: ")
     for i in range(ancho):
@@ -36,7 +36,7 @@ def salYpimienta(img,ancho,alto,pixeles):
     return img 
     
 
-escalaGrises()
+
 
 
 

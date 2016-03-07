@@ -3,23 +3,20 @@ from PIL import Image
 from sys import argv
 
 
-def filtroMediana():
+def filtroMediana(nombreImagen = argv[1]):
 	#obtiene nombre de imagen como parametro
-	nombreImagen = argv[1]
-
 	#Abre la imagen, obtiene su ancho, alto y sus pixeles
 	img = Image.open(nombreImagen)
 	ancho,alto = img.size
 	pixeles = img.load()
-
 	#La transforma a escala de grises
 	bo.toGrayScale(pixeles, ancho, alto)
-	fMediana(pixeles, ancho, alto)
+	fMediana(pixeles, ancho, alto, img)
 
 #[i-1, j-1]		[i, j-1]	[i+1, j-1]			[1][4][6]	
 #[i-1, j]		[i,j]		[i+1, j]	----->	[2][0][7]
 #[i-1, j+1]		[i, j+1]	[i+1, j+1]			[3][5][8]
-def fMediana(pixeles, ancho, alto):
+def fMediana(pixeles, ancho, alto,img):
 	for i in range(ancho):
 		    for j in range(alto):
 		    	#1
@@ -87,7 +84,7 @@ def fMediana(pixeles, ancho, alto):
 		    	pixeles[i,j] = (newpx, newpx, newpx)
 
 
-	fMediana(pixeles, ancho, alto)
+	#fMediana(pixeles, ancho, alto,img)
 	new = "filtroMediana.jpg"
 	img.save(new)
 	print "Imagen generada con exito 'filtroMediana.jpg'"

@@ -4,7 +4,7 @@ from PIL import Image
 from sys import argv
 
 
-def contrasteClaro:
+def contrasteClaro():
 
 	#obtiene nombre de imagen como parametro
 	nombreImagen = argv[1]
