@@ -75,4 +75,5 @@ def imgModa(imagen, ancho, alto,pixeles):
 
 	new ="filtroModa.jpg"
 	imagen.save(new)
+	print "Imagen generada con exito 'filtroModa.jpg'"
 

@@ -4,7 +4,9 @@ import ImageDraw
 from sys import argv
 from time import * 
 import numpy
-from FiltroModa import escalaGrisesModa #Importar función de librería.
+#Import de programas
+from FiltroModa import escalaGrisesModa #Importar funcion de libreria
+from FiltroMediana import filtroMediana
 
 class Aplicacion(Frame):
     
@@ -14,14 +16,21 @@ class Aplicacion(Frame):
         self.initUI()
 
     def initUI(self):
-        self.parent.title('Ventana')
+        self.parent.title('Actividad Fundamental 1')
         self.pack(fill=BOTH, expand=1)
-        #Área de botones
-        self.moda = Button(text='Filtro Moda', command = self.boton_FiltroModa).pack(side=LEFT)
+        #Area de botones
+        self.moda = Button(text='Filtro Modal', command = self.boton_FiltroModa).pack(side=LEFT)
+	self.mediana = Button(text='Filtro Mediana', command = self.boton_FiltroMedia).pack(side=LEFT)
 
     #Funciones de cada boton.    
     def boton_FiltroModa(self):
-        escalaGrisesModa()
+	print "Generando imagen..."        
+	escalaGrisesModa()
+
+    def boton_FiltroMedia(self):
+	print "Generando imagen..."        
+	filtroMediana()
+	
         
 def main():
     root = Tk()
