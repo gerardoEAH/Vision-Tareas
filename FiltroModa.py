@@ -74,5 +74,6 @@ def imgModa(imagen, ancho, alto,pixeles):
 	    	pixeles[i,j] = (newpx, newpx, newpx)
 
 	new ="filtroModa.jpg"
+	print "Filtro Moda terminado."
 	imagen.save(new)
 
