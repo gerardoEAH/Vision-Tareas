@@ -1,12 +1,13 @@
-#Este codigo es funcional. Pero en mi opinion le falta optimizarse mas.
-#Fue lo que realice un poco a prisas y es la version inicial.
-
 import numpy as np
 from sys import argv
 import cv2
 
+from FiltroMediana import filtroMediana
+
 #obtiene nombre de imagen como parametro
 nombreImagen = argv[1]
+img = cv2.imread(nombreImagen,0)
+ancho, alto = img.shape
 
 #Umbral de diferencia entre zonas
 thresh = 256
@@ -15,11 +16,18 @@ while thresh < 1 or thresh > 254:
 
 thresh = thresh**2
 
-#Lee la imagen en escala de grises
-img = cv2.imread(nombreImagen,0)
+#Loop donde correra el filtro de mediana multiples veces dependiendo del tamano de la imagen
+loop = 0
+while loop < (ancho * alto * 0.001):
+	filtroMediana()
+	loop += 1
+print "Filtro de mediana finalizado"
+
+#Lee la imagen en escala de grises despues del filtro
+img = cv2.imread("filtroMediana.jpg",0)
+
 
 #La imagen de escala de grise se vuelve de 16 tonos de gris.
-ancho, alto = img.shape
 for i in range(ancho):
 	    for j in range(alto):
 		#Formula mas efectiva que condiciones para dividir en los 16 tonos
@@ -29,7 +37,7 @@ for i in range(ancho):
 
 #Guarda la imagen
 cv2.imwrite(nombreImagen + 'TONOS.jpg', img)
-print "Guardando imagen de tonos"
+print "Imagen de Tonos guardada"
 
 
 ###### Zonas de Vecindad ######
@@ -160,8 +168,20 @@ while total > 1:
 
 
 #OPCIONAL
-#Guargamos el archivo de la matrix en un archivo de texto, donde cada pixel es el numero de zona y estan divididos por '-'
+#Guardamos el archivo de la matrix en un archivo de texto, donde cada pixel es el numero de zona y estan divididos por '-'
 np.savetxt('zonas.txt', zones, fmt='%1s', delimiter='-') 
-print "Text File saved."
+print "Archivo de texto de las Zonas de Vecindad Guardado"
 
+
+#Colorear la imagen en 9 tonos diferentes
+for i in range(ancho):
+	    for j in range(alto):
+	    	newpx = zones[i,j] * 32
+	    	while newpx > 255:
+	    		newpx = newpx - 256
+	    	img.itemset((i,j), newpx)
+	
+#Guarda la imagen final
+cv2.imwrite(nombreImagen + 'ZONAS.jpg', img)
+print "Guardada imagen de Zonas de Vecindad"
 
