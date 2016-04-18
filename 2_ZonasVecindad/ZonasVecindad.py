@@ -2,12 +2,11 @@ import numpy as np
 from sys import argv
 import cv2
 
-from FiltroMediana import filtroMediana
-
 #obtiene nombre de imagen como parametro
 nombreImagen = argv[1]
 img = cv2.imread(nombreImagen,0)
 ancho, alto = img.shape
+total = ancho * alto 	#Total de pixeles
 
 #Umbral de diferencia entre zonas
 thresh = 256
@@ -16,16 +15,11 @@ while thresh < 1 or thresh > 254:
 
 thresh = thresh**2
 
-#Loop donde correra el filtro de mediana multiples veces dependiendo del tamano de la imagen
-loop = 0
-while loop < (ancho * alto * 0.001):
-	filtroMediana()
-	loop += 1
-print "Filtro de mediana finalizado"
+#Blur el cual no afecta tanto los bordes de una imagen.
+img = cv2.bilateralFilter(img,9,75,75)
 
-#Lee la imagen en escala de grises despues del filtro
-img = cv2.imread("filtroMediana.jpg",0)
-
+cv2.imwrite(nombreImagen + 'BLUR.jpg', img)
+print "Blur Generado"
 
 #La imagen de escala de grise se vuelve de 16 tonos de gris.
 for i in range(ancho):
@@ -41,10 +35,9 @@ print "Imagen de Tonos guardada"
 
 
 ###### Zonas de Vecindad ######
-#Crear array de Zonas donde el valor de todo es 0
+#Crear array de Zonas y vecinos donde el valor de todo es 0
 zones = np.zeros(img.shape, dtype=np.int)
-
-##Funciones que se usaran##
+veci = np.zeros((total,2), dtype=np.int)
 
 #Esta funcion mira los vecinos del pixel (i, j) y si estos estan dentro del rango los une a a la misma zona.
 def vecinos(i, j):
@@ -53,118 +46,94 @@ def vecinos(i, j):
 	global value
 	global n
 	global total
+	global aux
+	global veci
+	global zones
 
 	#Se verifica que el pixel adyacente se encuentre en los rangos de la imagen.
 	#Despues se checa que no tengo zona, es decir su zona sea 0
 	#Por ultimo se checa si la diferencia de intensidades este dentro del rango.
-	#Y si es asi, lo coloca dentro de la zona 'n'. Y disminuimos en uno el total de pixeles que faltan de unir a una zona	
+	#Y si es asi, guarda su posicion en el arreglo de vecinos, lo vuelve dentro de la zona actual 'n' 
+	#y disminuye en uno el total faltante
 
 	if i - 1 >= 0:
 		if zones[i - 1, j] == 0:
-			if (value - img.item(i,j))**2 < thresh:
+			if (value - img.item(i - 1,j))**2 <= thresh:
+				veci[aux, 0] = i - 1
+				veci[aux, 1] = j
+				aux += 1
 				zones[i - 1,j] = n
 				total -= 1
 
 	if j - 1 >= 0:
 		if zones[i, j - 1] == 0:
-			if (value - img.item(i,j))**2 < thresh:
+			if (value - img.item(i,j - 1))**2 <= thresh:
+				veci[aux, 0] = i
+				veci[aux, 1] = j - 1
+				aux += 1
 				zones[i,j - 1] = n
 				total -= 1
 
 	if i + 1 < ancho:
 		if zones[i + 1, j] == 0:
-			if (value - img.item(i,j))**2 < thresh:
+			if (value - img.item(i + 1,j))**2 <= thresh:
+				veci[aux, 0] = i + 1
+				veci[aux, 1] = j
+				aux += 1
 				zones[i + 1,j] = n
 				total -= 1
 
+
 	if j + 1 < alto:
 		if zones[i, j + 1] == 0:
-			if (value - img.item(i,j))**2 < thresh:
+			if (value - img.item(i,j + 1))**2 <= thresh:
+				veci[aux, 0] = i
+				veci[aux, 1] = j + 1
+				aux += 1
 				zones[i,j + 1] = n
 				total -= 1
-
-#Esta funcion nos regresa verdadero si alguno de los vecinos del pixel (i,j) pertecen a la zona 'n' que estamos trabajando
-#De lo contrario nos regresa falso
-def isVecino(i, j):
-	
-	#Variable global de la zona
-	global n
-
-	#Se verifica que el pixel que queremos ver exista dentro de los limites de la imagen
-	#Despues se checa si pertenecen a la zona y si es asi nos regresa verdadero
-
-	if i - 1 >= 0:
-		if zones[i - 1, j] == n:
-			return True
-
-	if j - 1 >= 0:
-		if zones[i, j - 1] == n:
-			return True
-
-	if i + 1 < ancho:
-		if zones[i + 1, j] == n:
-			return True
-
-	if j + 1 < alto:
-		if zones[i, j + 1] == n:
-			return True
-
-	#Si no regresa verdadero porque no tiene vecinos de la zona nos regresa falso.
-	return False
 
 
 #Comienza a correr el algoritmo
 
 #Declarar variables y seleccionar el pixel inicial como el  (0,0)
 n = 1 #La zona. Se inicia en 1 y cuando termine de encontrar una zona se incrementa para la siguiente zona
-i = 0
-j = 0
+aux = 0 #Auxiliar. Contador del indice de donde se agregaran los nuevos pixeles de la zona
+k = 0 #Auxiliar. Contador dentro de los ciclos para entrar en el arreglo de vecinos
 value = img.item(i,j) 	#Valor del pixel con el cual comparar los demas
-zones[i,j] = n		#Pixel inicial esta en la primera zona
-selected = True		#Ya se selecciono un pixel y zona asi que es verdadero
-i += 1			#Nos movemos al pixel adyacente
-total = ancho * alto 	#Total de pixeles
+zones[0,0] = n		#Pixel inicial esta en la primera zona
+selected = True #Ya se selecciono un nuevo pixel y zona nueva
+total -= 1 #Al haber seleccionado un pixen en una zona se disminuye en uno.
+vecinos(0,0) #Checa los vecinos de nuestro pixel inicial
 
-
-#Iterara hasta que no haya pixeles sin zona
+#Mientras aun haya pixeles sin zona...
 while total > 1:
-	#Detiene este ciclo cuando recorra toda la imagen
-	while j <= alto: 
-		#Que no se pase del limite de la imagen
-		if i + 1 <= ancho and j + 1 <= alto:
-			#Si el pixel no tiene zona y no hay seleccion de nueva zona.
-			if zones[i,j] == 0 and not(selected):
-				n += 1			#Incrementa n para empezar con la siguiente zona
-				value = img.item(i,j)	#Guarda el valor del pixel actual para las comparaciones
-				zones[i,j] = n		#Vuelve el pixel actual en la nueva zona
-				total -= 1		#Al tener un pixel nuevo en zona, disminuimos total para saber cuantos pixeles faltan
-				selected = True		#Como seleccionamos una nueva zona volvemos selected verdadero
+	#Mientras estemos en una posicion del arreglo donde sea diferente de (0,0), es decir hay pixeles donde no hemos visto sus vecinos
+	while veci[k, 0] > 0 or veci[k, 1] > 0:
+		#Checamos sus vecinos y aumentamos k en uno
+		vecinos(veci[k,0], veci[k,1])
+		k += 1
 
-			#Si no tiene zona, pero si se ha seleccionado una nueva zona
-			elif zones[i,j] == 0 and selected:
-				#Si tiene vecinos con zona actual
-				if isVecino(i,j):
-					#Si entra en el rango para pertenecer a la zona
-					if (value - img.item(i,j))**2 < thresh:
-						zones[i,j] = n	#Vuelve el pixel actual en la zona 
-						total -= 1	#Al tener un pixel nuevo en zona, disminuimos total para saber cuantos pixeles faltan
-						vecinos(i,j)	#Checa si sus vecinos pertenecen a la zona.
-			
-			#Si la zona del pixel actual pertenece ya a la zona, checa sus vecinos para ver si tambien pertenecen
-			elif zones[i,j] == n:
-				vecinos(i,j)
+	#Al ya no haber mas pixeles posibles reiniciamos el arreglo de vecinos. Y ahora no hemos selecionado un nuevo pixel para continuar
+	veci = np.zeros((total,2))
+	selected = False
 
-		#Nos movemos en la imagen
-		if i + 1 < ancho:
-			i += 1
-		else:
-			i = 0
-			j += 1
-
-	#Al teminar de ver toda la imagen y llenamos la zona, proseguimos a repetir el proceso con una nueva zona.
-	selected = False	#No tenemos pixel seleccionado asi que toma el valor de falso
-	i = 0			#Volvemos a movernos por la imagen desde el inicio
-	j = 0
+	#Recorremos la imagen hasta encontrar un pixel en sin zona.
+	for p in range(ancho):
+		for q in range (alto):
+			if zones[p,q] == 0:
+				#Mismo proceso inicial.
+				n += 1 		#Aumentamos la zona en 1
+				zones[p,q] = n 	#Pixel actual en la nueva zona 'n'
+				total -= 1 		#Encontramos nuevo pixel asi que disminuimos en 1
+				aux = 0			#Reiniciamos variables
+				k = 0			#Reiniciamos variables
+				value = img.item(p,q)	#Nuevo valor a comparar, el de nuestro nuevo pixel
+				vecinos(p,q)	#Checamos sus vecinos
+				selected = True	#Encontramos nuevo pixel
+				break #Ya encontramos uno asi que terminamos de ver en la imagen.
+		if selected:
+			break #Ya encontramos uno asi que terminamos de ver en la imagen.
 
 
 #OPCIONAL

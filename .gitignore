@@ -65,3 +65,7 @@ target/
 #Image Files
 *.jpg
 *.png
+*.jpe
+
+#TextFiles
+*.txt
