@@ -15,13 +15,12 @@ while thresh < 1 or thresh > 254:
 
 thresh = thresh**2
 
-img = cv2.blur(img,(5,5))
-img = cv2.blur(img,(5,5))
 #Blur el cual no afecta tanto los bordes de una imagen.
-#img = cv2.bilateralFilter(img,9,75,75)
+#img = cv2.blur(img,(5,5))
+#img = cv2.blur(img,(5,5))
+img = cv2.bilateralFilter(img,9,75,75)
 
 cv2.imwrite(nombreImagen + 'BLUR.jpg', img)
-#print "Blur Generado"
 
 #La imagen de escala de grise se vuelve de 16 tonos de gris.
 for i in range(ancho):
@@ -95,7 +94,6 @@ def vecinos(i, j):
 				zones[i,j + 1] = n
 				total -= 1
 
-
 #Comienza a correr el algoritmo
 
 #Declarar variables y seleccionar el pixel inicial como el  (0,0)
@@ -105,7 +103,7 @@ k = 0 #Auxiliar. Contador dentro de los ciclos para entrar en el arreglo de veci
 value = img.item(i,j) 	#Valor del pixel con el cual comparar los demas
 zones[0,0] = n		#Pixel inicial esta en la primera zona
 selected = True #Ya se selecciono un nuevo pixel y zona nueva
-total -= 1 #Al haber seleccionado un pixen en una zona se disminuye en uno.
+total -= 1 #Al haber seleccionado un pixel en una zona se disminuye en uno.
 vecinos(0,0) #Checa los vecinos de nuestro pixel inicial
 
 #Mientras aun haya pixeles sin zona...
@@ -143,7 +141,6 @@ while total > 1:
 np.savetxt('zonas.txt', zones, fmt='%1s', delimiter='-') 
 print "Archivo de texto de las Zonas de Vecindad Guardado"
 
-
 #Colorear la imagen en 9 tonos diferentes
 for i in range(ancho):
 	    for j in range(alto):
@@ -156,3 +153,59 @@ for i in range(ancho):
 cv2.imwrite(nombreImagen + 'ZONAS.jpg', img)
 print "Guardada imagen de Zonas de Vecindad"
 
+
+#Deteccion de Bordes 
+def bordes(i,j,img):
+	global zones
+	next = False
+	zonePx[(zones[i,j] - 1),0] += 1 #Pixeles totales [n,0], Pixeles blancos [n,1]
+	if i - 1 >= 0 and not(next):
+		if zones[i-1,j] == zones[i,j]:
+			img[i,j] = 0
+		else:
+			img[i,j] = 255
+			next = True
+			zonePx[(zones[i,j] - 1),1] += 1
+
+	if j - 1 >= 0 and not(next):
+		if zones[i, j - 1] == zones[i,j]:
+			img[i,j] = 0
+		else:
+			img[i,j] = 255
+			next = True
+			zonePx[(zones[i,j] - 1),1] += 1
+
+	if i + 1 < ancho and not(next):
+		if zones[i+1, j] == zones[i,j]:
+			img[i,j] = 0
+		else:
+			img[i,j] = 255
+			next = True
+			zonePx[(zones[i,j] - 1),1] += 1
+
+	if j + 1 < alto and not(next):
+		if zones[i, j+1] == zones[i,j]:
+			img[i,j] = 0	
+		else:
+			img[i,j] = 255
+			next = True
+			zonePx[(zones[i,j] - 1),1] += 1
+
+zonePx = np.zeros((n,2), dtype=np.int) #zonePx[n] = [pxTotales, pxBlancos]
+
+#bordes parte 1 --Funciona mejor en unas imagenes sola
+for i in range(ancho):
+	for j in range(alto):
+		bordes(i,j,img)
+
+#bordes parte 2 --Solo con ciertas imagenes mejora el resultado de la parte 1
+'''
+for i in range(ancho):
+	for j in range(alto):
+		if zonePx[(zones[i,j] - 1),1] > zonePx[(zones[i,j] - 1),0] * 0.75: #pxBlancos > 1/2 de pixeles totales
+			img[i,j] = 255
+		else:
+			img[i,j] = 0
+'''
+cv2.imwrite(nombreImagen + 'BORDES.jpg', img)
+print "Se guardo imagen bordes"
